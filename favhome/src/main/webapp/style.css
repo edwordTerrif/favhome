@@ -109,6 +109,7 @@ a {
 
 /* ===== 인기 맛집 ===== */
 .container {
+	width: 100%;
 	max-width: 1100px;
 	margin: 0 auto;
 	padding: 60px 20px;
@@ -180,4 +181,619 @@ a {
 	color: #999;
 	background-color: #fff;
 	border-top: 1px solid #eee;
+}
+
+/* 내용이 짧은 페이지에서도 하단이 화면 맨 아래에 붙도록 */
+body {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+.footer {
+	margin-top: auto;
+}
+
+.footer a:hover {
+	color: #ff6b35;
+}
+
+
+/* =========================================================
+   여기부터 2주차 추가: 공통 요소
+   ========================================================= */
+
+/* ===== 섹션 제목 + 오른쪽 링크/버튼 ===== */
+.section-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 24px;
+}
+
+.container .section-head h2 {
+	margin-bottom: 0;
+}
+
+.more {
+	font-size: 14px;
+	color: #888;
+}
+
+.more:hover {
+	color: #ff6b35;
+}
+
+/* ===== 버튼 ===== */
+.btn {
+	display: inline-block;
+	padding: 11px 22px;
+	font-family: inherit;
+	font-size: 15px;
+	font-weight: bold;
+	color: #fff;
+	background-color: #ff6b35;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.btn:hover {
+	background-color: #e85a24;
+}
+
+.btn-gray {
+	color: #555;
+	background-color: #eee;
+}
+
+.btn-gray:hover {
+	background-color: #ddd;
+}
+
+.btn-line {
+	color: #e85a24;
+	background-color: #fff;
+	border: 1px solid #ffc9b3;
+}
+
+.btn-line:hover {
+	background-color: #fff3eb;
+}
+
+.btn-small {
+	padding: 6px 12px;
+	font-size: 13px;
+	font-weight: normal;
+}
+
+.btn-full {
+	width: 100%;
+	padding: 14px;
+}
+
+.inline-form {
+	display: inline;
+}
+
+/* ===== 입력 폼 ===== */
+.form-group {
+	margin-bottom: 18px;
+}
+
+.form-group label,
+.review-form-row label {
+	display: block;
+	margin-bottom: 6px;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea,
+.list-search input,
+.review-form select,
+.review-form textarea {
+	width: 100%;
+	padding: 12px 14px;
+	font-family: inherit;
+	font-size: 15px;
+	color: #333;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus,
+.list-search input:focus,
+.review-form select:focus,
+.review-form textarea:focus {
+	border-color: #ff6b35;
+}
+
+.form-group textarea,
+.review-form textarea {
+	min-height: 120px;
+	line-height: 1.6;
+	resize: vertical;
+}
+
+.help {
+	margin-top: 6px;
+	font-size: 13px;
+	color: #999;
+}
+
+.error-msg {
+	margin-bottom: 16px;
+	font-size: 14px;
+	color: #e53935;
+}
+
+.notice,
+.empty {
+	padding: 30px;
+	text-align: center;
+	color: #888;
+	background-color: #fff;
+	border-radius: 12px;
+}
+
+.notice a {
+	font-weight: bold;
+	color: #ff6b35;
+}
+
+/* ===== 페이징 ===== */
+.pagination {
+	display: flex;
+	justify-content: center;
+	gap: 6px;
+	margin-top: 40px;
+}
+
+.pagination a {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-width: 36px;
+	height: 36px;
+	font-size: 14px;
+	background-color: #fff;
+	border: 1px solid #eee;
+	border-radius: 8px;
+}
+
+.pagination a:hover {
+	border-color: #ff6b35;
+}
+
+.pagination a.active {
+	font-weight: bold;
+	color: #fff;
+	background-color: #ff6b35;
+	border-color: #ff6b35;
+}
+
+
+/* =========================================================
+   페이지별 스타일
+   ========================================================= */
+
+/* ===== 로그인 · 회원가입 ===== */
+.auth-box {
+	max-width: 420px;
+	margin: 0 auto;
+	padding: 40px 36px;
+	background-color: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.container .auth-box h2 {
+	margin-bottom: 28px;
+	text-align: center;
+}
+
+.auth-link {
+	margin-top: 20px;
+	text-align: center;
+	font-size: 14px;
+	color: #888;
+}
+
+.auth-link a {
+	margin-left: 4px;
+	font-weight: bold;
+	color: #ff6b35;
+}
+
+/* ===== 맛집 목록 ===== */
+.list-search {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 24px;
+}
+
+.list-search input {
+	flex: 1;
+}
+
+.toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 20px;
+}
+
+.tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.tabs a {
+	padding: 8px 16px;
+	font-size: 14px;
+	background-color: #fff;
+	border: 1px solid #eee;
+	border-radius: 20px;
+}
+
+.tabs a:hover {
+	border-color: #ff6b35;
+}
+
+.tabs a.active {
+	color: #fff;
+	background-color: #ff6b35;
+	border-color: #ff6b35;
+}
+
+.sort a {
+	margin-left: 14px;
+	font-size: 14px;
+	color: #999;
+}
+
+.sort a.active {
+	font-weight: bold;
+	color: #333;
+}
+
+.result-count {
+	margin-bottom: 16px;
+	font-size: 14px;
+	color: #888;
+}
+
+.result-count b {
+	color: #ff6b35;
+}
+
+/* ===== 맛집 상세 ===== */
+.detail-top {
+	display: flex;
+	gap: 36px;
+	padding: 28px;
+	background-color: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.detail-thumb {
+	display: flex;
+	flex: 0 0 340px;
+	justify-content: center;
+	align-items: center;
+	height: 250px;
+	font-size: 110px;
+	background-color: #ffe8d9;
+	border-radius: 10px;
+}
+
+.detail-info {
+	flex: 1;
+}
+
+.tag {
+	display: inline-block;
+	margin-bottom: 10px;
+	padding: 4px 12px;
+	font-size: 13px;
+	color: #ff6b35;
+	background-color: #fff3eb;
+	border-radius: 12px;
+}
+
+.detail-info h1 {
+	margin-bottom: 8px;
+	font-size: 32px;
+}
+
+.detail-star {
+	margin-bottom: 20px;
+	font-size: 22px;
+	font-weight: bold;
+	color: #ffa41b;
+}
+
+.detail-star span {
+	font-size: 15px;
+	font-weight: normal;
+	color: #aaa;
+}
+
+.detail-meta {
+	list-style: none;
+}
+
+.detail-meta li {
+	margin-bottom: 8px;
+	font-size: 15px;
+	color: #555;
+}
+
+.detail-meta b {
+	display: inline-block;
+	width: 50px;
+	font-weight: normal;
+	color: #aaa;
+}
+
+.detail-desc {
+	margin-top: 16px;
+	padding-top: 16px;
+	line-height: 1.7;
+	color: #555;
+	border-top: 1px solid #f0f0f0;
+}
+
+/* ===== 리뷰 ===== */
+.review-section {
+	margin-top: 50px;
+}
+
+.count {
+	color: #ff6b35;
+}
+
+.review-form {
+	margin-bottom: 24px;
+	padding: 24px;
+	background-color: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.review-form-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+.review-form-row label {
+	margin-bottom: 0;
+}
+
+.review-form-row select {
+	width: auto;
+	padding: 8px 12px;
+	color: #ffa41b;
+}
+
+.form-actions-right {
+	margin-top: 12px;
+	text-align: right;
+}
+
+.review-list {
+	list-style: none;
+}
+
+.review-item {
+	margin-bottom: 14px;
+	padding: 22px 24px;
+	background-color: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.review-head {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	gap: 6px 12px;
+	margin-bottom: 10px;
+}
+
+.review-writer {
+	font-weight: bold;
+}
+
+.mine {
+	margin-left: 6px;
+	padding: 2px 8px;
+	font-size: 12px;
+	font-weight: normal;
+	color: #ff6b35;
+	background-color: #fff3eb;
+	border-radius: 10px;
+}
+
+.review-date {
+	margin-left: 10px;
+	font-size: 13px;
+	font-weight: normal;
+	color: #aaa;
+}
+
+.review-stars {
+	letter-spacing: 2px;
+	color: #ffa41b;
+}
+
+.review-content {
+	line-height: 1.7;
+	color: #444;
+}
+
+.review-btns {
+	display: flex;
+	justify-content: flex-end;
+	gap: 6px;
+	margin-top: 14px;
+}
+
+/* ===== 폼 박스 (리뷰 수정, 맛집 등록) ===== */
+.form-box {
+	max-width: 640px;
+	margin: 0 auto;
+	padding: 36px;
+	background-color: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.container .form-box h2 {
+	margin-bottom: 6px;
+}
+
+.form-sub {
+	margin-bottom: 24px;
+	color: #888;
+}
+
+.form-box form {
+	margin-top: 24px;
+}
+
+.form-row {
+	display: flex;
+	gap: 16px;
+}
+
+.form-row .form-group {
+	flex: 1;
+}
+
+.form-actions {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 28px;
+}
+
+/* ===== 관리자 표 ===== */
+.table-wrap {
+	overflow-x: auto;
+	background-color: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+	white-space: nowrap;
+}
+
+.table th,
+.table td {
+	padding: 14px 12px;
+	font-size: 14px;
+	text-align: center;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.table th {
+	color: #555;
+	background-color: #fff3eb;
+}
+
+.table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.table tbody tr:hover {
+	background-color: #fffaf6;
+}
+
+.table .name {
+	font-weight: bold;
+	text-align: left;
+}
+
+.table .name a:hover {
+	color: #ff6b35;
+}
+
+.thumb-sm {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 48px;
+	height: 48px;
+	margin: 0 auto;
+	font-size: 26px;
+	background-color: #ffe8d9;
+	border-radius: 8px;
+}
+
+.manage .btn + .inline-form {
+	margin-left: 4px;
+}
+
+
+/* ===== 화면이 좁을 때 (휴대폰) ===== */
+@media (max-width: 700px) {
+	.header {
+		padding: 14px 16px;
+	}
+
+	.nav a {
+		margin-left: 12px;
+		font-size: 14px;
+	}
+
+	.banner {
+		padding: 56px 16px;
+	}
+
+	.banner h1 {
+		font-size: 30px;
+	}
+
+	.container {
+		padding: 36px 16px;
+	}
+
+	.detail-top {
+		flex-direction: column;
+		gap: 20px;
+		padding: 20px;
+	}
+
+	.detail-thumb {
+		flex-basis: auto;
+		height: 200px;
+	}
+
+	.form-row {
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.form-box,
+	.auth-box {
+		padding: 28px 20px;
+	}
 }
