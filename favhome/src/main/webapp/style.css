@@ -322,6 +322,14 @@ body {
 	resize: vertical;
 }
 
+.req {
+	color: #ff6b35;
+}
+
+.form-group .textarea-large {
+	min-height: 220px;
+}
+
 .help {
 	margin-top: 6px;
 	font-size: 13px;
@@ -343,9 +351,41 @@ body {
 	border-radius: 12px;
 }
 
-.notice a {
+.notice a,
+.empty a {
 	font-weight: bold;
 	color: #ff6b35;
+}
+
+/* 로그인한 회원 닉네임 (상단 메뉴) */
+.nav-user {
+	margin-left: 24px;
+	font-size: 15px;
+	font-weight: bold;
+	color: #ff6b35;
+}
+
+/* 업로드한 사진: 칸에 꽉 차게 */
+.thumb img,
+.detail-thumb img,
+.thumb-sm img,
+.current-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.detail-thumb,
+.thumb-sm {
+	overflow: hidden;
+}
+
+.current-image {
+	width: 160px;
+	height: 120px;
+	margin-bottom: 10px;
+	overflow: hidden;
+	border-radius: 8px;
 }
 
 /* ===== 페이징 ===== */
@@ -552,7 +592,15 @@ body {
 	padding-top: 16px;
 	line-height: 1.7;
 	color: #555;
+	white-space: pre-line; /* 소개글의 줄바꿈을 그대로 보여줌 */
 	border-top: 1px solid #f0f0f0;
+}
+
+.detail-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 6px;
+	margin-top: 18px;
 }
 
 /* ===== 리뷰 ===== */
@@ -755,13 +803,30 @@ body {
 
 /* ===== 화면이 좁을 때 (휴대폰) ===== */
 @media (max-width: 700px) {
+	/* 메뉴가 많아서 로고 아래 줄로 내림 */
 	.header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
 		padding: 14px 16px;
 	}
 
-	.nav a {
-		margin-left: 12px;
+	.nav {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px 16px;
+	}
+
+	.nav a,
+	.nav-user {
+		margin-left: 0;
 		font-size: 14px;
+		white-space: nowrap;
+	}
+
+	.nav .btn-join {
+		padding: 6px 14px;
 	}
 
 	.banner {

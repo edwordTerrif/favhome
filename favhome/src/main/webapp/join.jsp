@@ -1,4 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="common.jsp" %>
+<%
+	if (isLogin) {
+		response.sendRedirect("main.jsp");
+		return;
+	}
+%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -15,7 +22,7 @@
 		<div class="auth-box">
 			<h2>회원가입</h2>
 
-			<form action="#" method="post">
+			<form action="join_process.jsp" method="post">
 				<div class="form-group">
 					<label for="loginId">아이디</label>
 					<input type="text" id="loginId" name="loginId" placeholder="영문, 숫자 4~20자" maxlength="20" required>
@@ -30,7 +37,7 @@
 				</div>
 				<div class="form-group">
 					<label for="nickname">닉네임</label>
-					<input type="text" id="nickname" name="nickname" placeholder="리뷰에 표시될 이름" maxlength="20" required>
+					<input type="text" id="nickname" name="nickname" placeholder="맛집과 리뷰에 표시될 이름" maxlength="20" required>
 				</div>
 
 				<button type="submit" class="btn btn-full">가입하기</button>

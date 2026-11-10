@@ -1,4 +1,87 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="common.jsp" %>
+<%@ include file="dbconn.jsp" %>
+<%!
+	// 검색 조건을 유지한 채로 목록 주소 만들기
+	String listUrl(String keyword, String category, String sort, int page) {
+		return "list.jsp?keyword=" + enc(keyword) + "&amp;category=" + enc(category)
+				+ "&amp;sort=" + sort + "&amp;page=" + page;
+	}
+%>
+<%
+	// ===== 1. 파라미터 읽기 =====
+	String keyword = trim(request.getParameter("keyword"));      // 검색어
+	String category = trim(request.getParameter("category"));    // 카테고리 (빈 값이면 전체)
+	String sort = request.getParameter("sort");                  // star / review / new
+	if (!"review".equals(sort) && !"new".equals(sort)) {
+		sort = "star";
+	}
+	int pageNum = toInt(request.getParameter("page"), 1);         // 현재 페이지
+	int pageSize = 8;                                             // 한 페이지에 8개
+
+	// ===== 2. 검색 조건 (WHERE) 만들기 =====
+	String where = " WHERE 1 = 1 ";
+	List<String> params = new ArrayList<>();
+	if (!keyword.isEmpty()) {
+		where += " AND (r.name LIKE ? OR r.region LIKE ?) ";
+		params.add("%" + keyword + "%");
+		params.add("%" + keyword + "%");
+	}
+	if (!category.isEmpty()) {
+		where += " AND r.category = ? ";
+		params.add(category);
+	}
+
+	// ===== 3. 정렬 (ORDER BY) =====
+	String orderBy;
+	if (sort.equals("review")) {
+		orderBy = " ORDER BY review_count DESC, avg_rating DESC, r.restaurant_id DESC ";
+	} else if (sort.equals("new")) {
+		orderBy = " ORDER BY r.created_at DESC, r.restaurant_id DESC ";
+	} else {
+		orderBy = " ORDER BY avg_rating DESC, review_count DESC, r.restaurant_id DESC ";
+	}
+
+	// ===== 4. 전체 개수 → 페이지 수 계산 =====
+	PreparedStatement pstmt = conn.prepareStatement("SELECT COUNT(*) FROM restaurants r " + where);
+	for (int i = 0; i < params.size(); i++) {
+		pstmt.setString(i + 1, params.get(i));
+	}
+	ResultSet rs = pstmt.executeQuery();
+	rs.next();
+	int totalCount = rs.getInt(1);
+	rs.close();
+	pstmt.close();
+
+	int totalPage = (totalCount + pageSize - 1) / pageSize;
+	if (totalPage < 1) totalPage = 1;
+	if (pageNum < 1) pageNum = 1;
+	if (pageNum > totalPage) pageNum = totalPage;
+
+	// ===== 5. 현재 페이지의 맛집 목록 =====
+	String sql = "SELECT r.restaurant_id, r.name, r.category, r.region, r.image, r.created_at, "
+			+ "       IFNULL(AVG(v.rating), 0) AS avg_rating, COUNT(v.review_id) AS review_count "
+			+ "FROM restaurants r "
+			+ "LEFT JOIN reviews v ON v.restaurant_id = r.restaurant_id "
+			+ where
+			+ "GROUP BY r.restaurant_id "
+			+ orderBy
+			+ "LIMIT ? OFFSET ?";
+	pstmt = conn.prepareStatement(sql);
+	int index = 1;
+	for (String p : params) {
+		pstmt.setString(index++, p);
+	}
+	pstmt.setInt(index++, pageSize);
+	pstmt.setInt(index, (pageNum - 1) * pageSize);
+	rs = pstmt.executeQuery();
+
+	// 페이지 번호는 5개씩 묶어서 보여줌 (1~5, 6~10 ...)
+	int startPage = (pageNum - 1) / 5 * 5 + 1;
+	int endPage = Math.min(startPage + 4, totalPage);
+
+	String[] categories = { "한식", "중식", "일식", "양식", "분식", "카페" };
+%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -12,122 +95,75 @@
 	<%@ include file="header.jsp" %>
 
 	<main class="container">
-		<h2>맛집 목록</h2>
+		<div class="section-head">
+			<h2>맛집 목록</h2>
+<% if (!isAdmin) { %>
+			<a href="restaurant_form.jsp" class="btn">+ 맛집 등록</a>
+<% } %>
+		</div>
 
-		<!-- 검색창 -->
+		<!-- 검색창 (카테고리, 정렬은 그대로 유지) -->
 		<form class="list-search" action="list.jsp" method="get">
-			<input type="text" name="keyword" placeholder="맛집 이름이나 지역으로 검색">
+			<input type="hidden" name="category" value="<%= esc(category) %>">
+			<input type="hidden" name="sort" value="<%= sort %>">
+			<input type="text" name="keyword" value="<%= esc(keyword) %>" placeholder="맛집 이름이나 지역으로 검색">
 			<button type="submit" class="btn">검색</button>
 		</form>
 
 		<!-- 카테고리 + 정렬 -->
 		<div class="toolbar">
 			<div class="tabs">
-				<a href="list.jsp" class="active">전체</a>
-				<a href="list.jsp?category=한식">한식</a>
-				<a href="list.jsp?category=중식">중식</a>
-				<a href="list.jsp?category=일식">일식</a>
-				<a href="list.jsp?category=양식">양식</a>
-				<a href="list.jsp?category=분식">분식</a>
-				<a href="list.jsp?category=카페">카페</a>
+				<a href="<%= listUrl(keyword, "", sort, 1) %>" class="<%= category.isEmpty() ? "active" : "" %>">전체</a>
+<% for (String c : categories) { %>
+				<a href="<%= listUrl(keyword, c, sort, 1) %>" class="<%= c.equals(category) ? "active" : "" %>"><%= c %></a>
+<% } %>
 			</div>
 			<div class="sort">
-				<a href="list.jsp?sort=star" class="active">별점순</a>
-				<a href="list.jsp?sort=review">리뷰 많은순</a>
-				<a href="list.jsp?sort=new">최신순</a>
+				<a href="<%= listUrl(keyword, category, "star", 1) %>" class="<%= sort.equals("star") ? "active" : "" %>">별점순</a>
+				<a href="<%= listUrl(keyword, category, "review", 1) %>" class="<%= sort.equals("review") ? "active" : "" %>">리뷰 많은순</a>
+				<a href="<%= listUrl(keyword, category, "new", 1) %>" class="<%= sort.equals("new") ? "active" : "" %>">최신순</a>
 			</div>
 		</div>
 
-		<p class="result-count">총 <b>12</b>곳</p>
+		<p class="result-count">총 <b><%= totalCount %></b>곳</p>
 
-		<!-- 맛집 카드 (한 페이지에 8개) -->
+<% if (totalCount == 0) { %>
+		<p class="empty">조건에 맞는 맛집이 없습니다.</p>
+<% } else { %>
 		<div class="card-list">
-			<a href="detail.jsp?id=1" class="card">
-				<div class="thumb">🍲</div>
+<%		while (rs.next()) { %>
+			<a href="detail.jsp?id=<%= rs.getInt("restaurant_id") %>" class="card">
+				<div class="thumb"><%= thumb(rs.getString("image"), rs.getString("category")) %></div>
 				<div class="info">
-					<h3>든든국밥</h3>
-					<p class="desc">한식 · 종로</p>
-					<p class="star">★ 4.8 <span>(리뷰 32)</span></p>
+					<h3><%= esc(rs.getString("name")) %></h3>
+					<p class="desc"><%= esc(rs.getString("category")) %> · <%= esc(rs.getString("region")) %></p>
+					<p class="star">★ <%= avgText(rs.getDouble("avg_rating")) %> <span>(리뷰 <%= rs.getInt("review_count") %>)</span></p>
 				</div>
 			</a>
-
-			<a href="detail.jsp?id=2" class="card">
-				<div class="thumb">🍜</div>
-				<div class="info">
-					<h3>골목라멘</h3>
-					<p class="desc">일식 · 홍대</p>
-					<p class="star">★ 4.7 <span>(리뷰 27)</span></p>
-				</div>
-			</a>
-
-			<a href="detail.jsp?id=6" class="card">
-				<div class="thumb">🍣</div>
-				<div class="info">
-					<h3>스시하루</h3>
-					<p class="desc">일식 · 강남</p>
-					<p class="star">★ 4.6 <span>(리뷰 22)</span></p>
-				</div>
-			</a>
-
-			<a href="detail.jsp?id=3" class="card">
-				<div class="thumb">🍕</div>
-				<div class="info">
-					<h3>화덕피자집</h3>
-					<p class="desc">양식 · 성수</p>
-					<p class="star">★ 4.5 <span>(리뷰 41)</span></p>
-				</div>
-			</a>
-
-			<a href="detail.jsp?id=7" class="card">
-				<div class="thumb">🍖</div>
-				<div class="info">
-					<h3>연탄갈비</h3>
-					<p class="desc">한식 · 마포</p>
-					<p class="star">★ 4.5 <span>(리뷰 19)</span></p>
-				</div>
-			</a>
-
-			<a href="detail.jsp?id=5" class="card">
-				<div class="thumb">🥟</div>
-				<div class="info">
-					<h3>진짜루반점</h3>
-					<p class="desc">중식 · 을지로</p>
-					<p class="star">★ 4.4 <span>(리뷰 25)</span></p>
-				</div>
-			</a>
-
-			<a href="detail.jsp?id=4" class="card">
-				<div class="thumb">☕</div>
-				<div class="info">
-					<h3>모퉁이카페</h3>
-					<p class="desc">카페 · 연남동</p>
-					<p class="star">★ 4.3 <span>(리뷰 18)</span></p>
-				</div>
-			</a>
-
-			<a href="detail.jsp?id=9" class="card">
-				<div class="thumb">🍢</div>
-				<div class="info">
-					<h3>신촌떡볶이</h3>
-					<p class="desc">분식 · 신촌</p>
-					<p class="star">★ 4.2 <span>(리뷰 15)</span></p>
-				</div>
-			</a>
+<%		} %>
 		</div>
 
 		<!-- 페이징 -->
 		<div class="pagination">
-			<a href="#">«</a>
-			<a href="list.jsp?page=1" class="active">1</a>
-			<a href="list.jsp?page=2">2</a>
-			<a href="#">»</a>
+<%		if (startPage > 1) { %>
+			<a href="<%= listUrl(keyword, category, sort, startPage - 1) %>">«</a>
+<%		} %>
+<%		for (int p = startPage; p <= endPage; p++) { %>
+			<a href="<%= listUrl(keyword, category, sort, p) %>" class="<%= p == pageNum ? "active" : "" %>"><%= p %></a>
+<%		} %>
+<%		if (endPage < totalPage) { %>
+			<a href="<%= listUrl(keyword, category, sort, endPage + 1) %>">»</a>
+<%		} %>
 		</div>
-
-		<!-- 검색 결과가 없을 때 보여줄 화면 (백엔드 연결 후 사용) -->
-		<!-- <p class="empty">검색 결과가 없습니다.</p> -->
+<% } %>
 	</main>
 
 	<%@ include file="footer.jsp" %>
 
 </body>
 </html>
+<%
+	rs.close();
+	pstmt.close();
+	conn.close();
+%>

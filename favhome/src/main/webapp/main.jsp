@@ -1,4 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="common.jsp" %>
+<%@ include file="dbconn.jsp" %>
+<%
+	// 인기 맛집 4곳: 평균 별점 높은 순 (리뷰가 없는 맛집은 0점)
+	String sql = "SELECT r.restaurant_id, r.name, r.category, r.region, r.image, "
+			+ "       IFNULL(AVG(v.rating), 0) AS avg_rating, COUNT(v.review_id) AS review_count "
+			+ "FROM restaurants r "
+			+ "LEFT JOIN reviews v ON v.restaurant_id = r.restaurant_id "
+			+ "GROUP BY r.restaurant_id "
+			+ "ORDER BY avg_rating DESC, review_count DESC "
+			+ "LIMIT 4";
+	PreparedStatement pstmt = conn.prepareStatement(sql);
+	ResultSet rs = pstmt.executeQuery();
+%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -21,7 +35,7 @@
 		</form>
 	</section>
 
-	<!-- 인기 맛집 (별점 높은 순 4곳) -->
+	<!-- 인기 맛집 -->
 	<main class="container">
 		<div class="section-head">
 			<h2>인기 맛집</h2>
@@ -29,45 +43,35 @@
 		</div>
 
 		<div class="card-list">
-			<a href="detail.jsp?id=1" class="card">
-				<div class="thumb">🍲</div>
+<%
+	int count = 0;
+	while (rs.next()) {
+		count++;
+%>
+			<a href="detail.jsp?id=<%= rs.getInt("restaurant_id") %>" class="card">
+				<div class="thumb"><%= thumb(rs.getString("image"), rs.getString("category")) %></div>
 				<div class="info">
-					<h3>든든국밥</h3>
-					<p class="desc">한식 · 종로</p>
-					<p class="star">★ 4.8 <span>(리뷰 32)</span></p>
+					<h3><%= esc(rs.getString("name")) %></h3>
+					<p class="desc"><%= esc(rs.getString("category")) %> · <%= esc(rs.getString("region")) %></p>
+					<p class="star">★ <%= avgText(rs.getDouble("avg_rating")) %> <span>(리뷰 <%= rs.getInt("review_count") %>)</span></p>
 				</div>
 			</a>
-
-			<a href="detail.jsp?id=2" class="card">
-				<div class="thumb">🍜</div>
-				<div class="info">
-					<h3>골목라멘</h3>
-					<p class="desc">일식 · 홍대</p>
-					<p class="star">★ 4.7 <span>(리뷰 27)</span></p>
-				</div>
-			</a>
-
-			<a href="detail.jsp?id=3" class="card">
-				<div class="thumb">🍕</div>
-				<div class="info">
-					<h3>화덕피자집</h3>
-					<p class="desc">양식 · 성수</p>
-					<p class="star">★ 4.5 <span>(리뷰 41)</span></p>
-				</div>
-			</a>
-
-			<a href="detail.jsp?id=4" class="card">
-				<div class="thumb">☕</div>
-				<div class="info">
-					<h3>모퉁이카페</h3>
-					<p class="desc">카페 · 연남동</p>
-					<p class="star">★ 4.3 <span>(리뷰 18)</span></p>
-				</div>
-			</a>
+<%
+	}
+%>
 		</div>
+
+<% if (count == 0) { %>
+		<p class="empty">아직 등록된 맛집이 없어요. 첫 번째 맛집을 <a href="restaurant_form.jsp">등록</a>해 보세요!</p>
+<% } %>
 	</main>
 
 	<%@ include file="footer.jsp" %>
 
 </body>
 </html>
+<%
+	rs.close();
+	pstmt.close();
+	conn.close();
+%>
