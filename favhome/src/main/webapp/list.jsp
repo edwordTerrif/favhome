@@ -59,7 +59,9 @@
 	if (pageNum > totalPage) pageNum = totalPage;
 
 	// ===== 5. 현재 페이지의 맛집 목록 =====
-	String sql = "SELECT r.restaurant_id, r.name, r.category, r.region, r.image, r.created_at, "
+	String sql = "SELECT r.restaurant_id, r.name, r.category, r.region, r.created_at, "
+			+ "       (SELECT i.file_name FROM restaurant_images i "
+			+ "         WHERE i.restaurant_id = r.restaurant_id ORDER BY i.image_id LIMIT 1) AS image, "  // 대표 사진 = 처음 올린 사진
 			+ "       IFNULL(AVG(v.rating), 0) AS avg_rating, COUNT(v.review_id) AS review_count "
 			+ "FROM restaurants r "
 			+ "LEFT JOIN reviews v ON v.restaurant_id = r.restaurant_id "

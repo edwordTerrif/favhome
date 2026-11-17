@@ -33,7 +33,6 @@
 	String address = rs.getString("address");
 	String phone = rs.getString("phone");
 	String description = rs.getString("description");
-	String image = rs.getString("image");
 	Timestamp createdAt = rs.getTimestamp("created_at");
 	int writerId = rs.getInt("member_id");
 	String writer = rs.getString("writer");
@@ -44,6 +43,17 @@
 
 	// 맛집 수정/삭제: 등록한 본인 또는 관리자
 	boolean canEditRestaurant = isAdmin || (isLogin && loginId == writerId);
+
+	// ===== 사진 목록 (처음 올린 사진이 대표) =====
+	List<String> images = new ArrayList<>();
+	pstmt = conn.prepareStatement("SELECT file_name FROM restaurant_images WHERE restaurant_id = ? ORDER BY image_id");
+	pstmt.setInt(1, restaurantId);
+	rs = pstmt.executeQuery();
+	while (rs.next()) {
+		images.add(rs.getString("file_name"));
+	}
+	rs.close();
+	pstmt.close();
 
 	// ===== 2. 리뷰 목록 (작성자 닉네임 포함) =====
 	int totalPage = (reviewCount + pageSize - 1) / pageSize;
@@ -84,7 +94,23 @@
 
 		<!-- 맛집 정보 -->
 		<section class="detail-top">
-			<div class="detail-thumb"><%= thumb(image, category) %></div>
+			<!-- 사진: 큰 사진 1장 + 아래 작은 사진들 (작은 사진을 누르면 큰 사진이 바뀜) -->
+			<div class="detail-gallery">
+				<div class="detail-thumb">
+<% if (images.isEmpty()) { %>
+					<%= thumb(null, category) %>
+<% } else { %>
+					<img id="mainPhoto" src="upload/<%= esc(images.get(0)) %>" alt="<%= esc(name) %>">
+<% } %>
+				</div>
+<% if (images.size() > 1) { %>
+				<ul class="photo-list">
+<%	for (int i = 0; i < images.size(); i++) { %>
+					<li><img src="upload/<%= esc(images.get(i)) %>" alt="" class="<%= i == 0 ? "active" : "" %>" onclick="showPhoto(this)"></li>
+<%	} %>
+				</ul>
+<% } %>
+			</div>
 			<div class="detail-info">
 				<span class="tag"><%= esc(category) %> · <%= esc(region) %></span>
 				<h1><%= esc(name) %></h1>
@@ -191,6 +217,18 @@
 	</main>
 
 	<%@ include file="footer.jsp" %>
+
+	<script>
+		// 작은 사진을 누르면 큰 사진을 그 사진으로 바꾸기
+		function showPhoto(img) {
+			document.getElementById("mainPhoto").src = img.src;
+			var all = document.querySelectorAll(".photo-list img");
+			for (var i = 0; i < all.length; i++) {
+				all[i].classList.remove("active");
+			}
+			img.classList.add("active");
+		}
+	</script>
 
 </body>
 </html>

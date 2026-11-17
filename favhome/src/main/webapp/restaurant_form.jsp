@@ -19,7 +19,11 @@
 	}
 
 	// 입력칸에 미리 채울 값 (수정일 때만)
-	String name = "", category = "", region = "", address = "", phone = "", description = "", image = null;
+	String name = "", category = "", region = "", address = "", phone = "", description = "";
+
+	// 이미 올려둔 사진 (수정일 때만)
+	List<Integer> imageIds = new ArrayList<>();
+	List<String> imageFiles = new ArrayList<>();
 
 	if (isEdit) {
 %>
@@ -39,7 +43,17 @@
 			address = rs.getString("address") == null ? "" : rs.getString("address");
 			phone = rs.getString("phone") == null ? "" : rs.getString("phone");
 			description = rs.getString("description");
-			image = rs.getString("image");
+		}
+		rs.close();
+		pstmt.close();
+
+		// 사진 목록 (올린 순서대로)
+		pstmt = conn.prepareStatement("SELECT image_id, file_name FROM restaurant_images WHERE restaurant_id = ? ORDER BY image_id");
+		pstmt.setInt(1, restaurantId);
+		rs = pstmt.executeQuery();
+		while (rs.next()) {
+			imageIds.add(rs.getInt("image_id"));
+			imageFiles.add(rs.getString("file_name"));
 		}
 		rs.close();
 		pstmt.close();
@@ -111,12 +125,21 @@
 				</div>
 
 				<div class="form-group">
-					<label for="image">대표 사진</label>
-<% if (image != null && !image.isEmpty()) { %>
-					<div class="current-image"><img src="upload/<%= esc(image) %>" alt="현재 사진"></div>
+					<label for="images">사진 (최대 <%= MAX_IMAGES %>장)</label>
+<% if (!imageIds.isEmpty()) { %>
+					<!-- 이미 올린 사진: 체크하면 저장할 때 삭제 -->
+					<ul class="photo-edit-list">
+<%	for (int i = 0; i < imageIds.size(); i++) { %>
+						<li>
+							<img src="upload/<%= esc(imageFiles.get(i)) %>" alt="">
+							<% if (i == 0) { %><span class="cover-badge">대표</span><% } %>
+							<label class="photo-delete"><input type="checkbox" name="deleteImageIds" value="<%= imageIds.get(i) %>"> 삭제</label>
+						</li>
+<%	} %>
+					</ul>
 <% } %>
-					<input type="file" id="image" name="image" accept="image/*">
-					<p class="help">jpg, png, gif, webp 파일 (최대 10MB)<%= isEdit ? " / 비워두면 기존 사진이 유지됩니다" : "" %></p>
+					<input type="file" id="images" name="images" accept="image/*" multiple>
+					<p class="help">Ctrl(맥은 Cmd)을 누른 채로 여러 장을 고를 수 있어요. 처음 올린 사진이 대표 사진이 됩니다. (jpg, png, gif, webp / 한 장 최대 10MB)</p>
 				</div>
 
 				<div class="form-group">

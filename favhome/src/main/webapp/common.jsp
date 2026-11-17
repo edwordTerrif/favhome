@@ -72,6 +72,18 @@
 		return "🍽️";
 	}
 
+	// 맛집 하나에 올릴 수 있는 사진 수
+	final int MAX_IMAGES = 10;
+
+	// upload 폴더에서 사진 파일 지우기
+	void deleteUploadFile(ServletContext application, String fileName) {
+		if (fileName == null || fileName.isEmpty()) return;
+		File file = new File(application.getRealPath("/upload"), fileName);
+		if (file.exists()) {
+			file.delete();
+		}
+	}
+
 	// 알림창을 띄우고 이전 화면으로 돌아가기
 	void alertBack(JspWriter out, String message) throws IOException {
 		out.println("<script>alert('" + message + "'); history.back();</script>");

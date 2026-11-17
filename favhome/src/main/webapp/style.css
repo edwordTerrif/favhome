@@ -368,11 +368,58 @@ body {
 /* 업로드한 사진: 칸에 꽉 차게 */
 .thumb img,
 .detail-thumb img,
-.thumb-sm img,
-.current-image img {
+.thumb-sm img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+}
+
+/* 맛집 수정 화면: 이미 올린 사진 목록 */
+.photo-edit-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+	gap: 10px;
+	margin-bottom: 12px;
+	list-style: none;
+}
+
+.photo-edit-list li {
+	position: relative;
+}
+
+.photo-edit-list img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 4 / 3;
+	object-fit: cover;
+	border-radius: 8px;
+}
+
+.cover-badge {
+	position: absolute;
+	top: 6px;
+	left: 6px;
+	padding: 2px 8px;
+	font-size: 12px;
+	color: #fff;
+	background-color: #ff6b35;
+	border-radius: 10px;
+}
+
+.form-group .photo-delete {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	margin: 4px 0 0;
+	font-size: 13px;
+	font-weight: normal;
+	color: #666;
+	cursor: pointer;
+}
+
+.form-group .photo-delete input {
+	width: auto;
+	padding: 0;
 }
 
 .detail-thumb,
@@ -380,13 +427,7 @@ body {
 	overflow: hidden;
 }
 
-.current-image {
-	width: 160px;
-	height: 120px;
-	margin-bottom: 10px;
-	overflow: hidden;
-	border-radius: 8px;
-}
+
 
 /* ===== 페이징 ===== */
 .pagination {
@@ -527,15 +568,44 @@ body {
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
+/* 왼쪽 사진 영역: 큰 사진 + 작은 사진들 */
+.detail-gallery {
+	flex: 0 0 340px;
+}
+
 .detail-thumb {
 	display: flex;
-	flex: 0 0 340px;
 	justify-content: center;
 	align-items: center;
 	height: 250px;
 	font-size: 110px;
 	background-color: #ffe8d9;
 	border-radius: 10px;
+}
+
+.photo-list {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 6px;
+	margin-top: 8px;
+	list-style: none;
+}
+
+.photo-list img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+	border: 2px solid transparent;
+	border-radius: 6px;
+	opacity: 0.6;
+	cursor: pointer;
+}
+
+.photo-list img:hover,
+.photo-list img.active {
+	border-color: #ff6b35;
+	opacity: 1;
 }
 
 .detail-info {
@@ -847,9 +917,12 @@ body {
 		padding: 20px;
 	}
 
-	.detail-thumb {
+	.detail-gallery {
 		flex-basis: auto;
-		height: 200px;
+	}
+
+	.detail-thumb {
+		height: 220px;
 	}
 
 	.form-row {
