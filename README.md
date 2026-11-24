@@ -3,7 +3,7 @@
 
 DB 구축으로 유저와 전반적인 게시물과 댓글 처리와 저장, 기본적인 로그인과 회원가입 그리고 관리자용 페이지와 관리까지 해서 기본적인 기능 자체는 구현되었습니다
 앞으로 여기서 추가 기능이 필요하다면 큰 틀에서 벗어나지 않고 덧붙이는 식으로 구현합니다<br>
-또한 이클립스 프로젝트에 import시 이용가능한 파일은 [릴리즈](https://github.com/edwordTerrif/favhome/releases/tag/1.0.0)를 참조하시길 바랍니다
+또한 이클립스 프로젝트에 import시 이용가능한 파일은 [릴리즈](https://github.com/edwordTerrif/favhome/releases/tag/1.1.0)를 참조하시길 바랍니다
 
 <hr><br>
 
