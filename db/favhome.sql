@@ -85,6 +85,23 @@ CREATE TABLE restaurant_images (
 ) COMMENT '맛집 사진';
 
 
+-- ---------------------------------------------------------
+-- 5. 찜 (회원이 마음에 드는 맛집을 저장)
+--    (회원, 맛집) 두 컬럼을 합쳐서 기본키로 써서 같은 맛집을 두 번 찜할 수 없음
+--    회원이나 맛집이 삭제되면 찜 정보도 함께 삭제
+-- ---------------------------------------------------------
+CREATE TABLE favorites (
+	member_id      INT       NOT NULL COMMENT '찜한 회원',
+	restaurant_id  INT       NOT NULL COMMENT '찜한 맛집',
+	created_at     DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '찜한 날짜',
+	PRIMARY KEY (member_id, restaurant_id),
+	CONSTRAINT fk_favorite_member FOREIGN KEY (member_id)
+		REFERENCES members (member_id) ON DELETE CASCADE,
+	CONSTRAINT fk_favorite_restaurant FOREIGN KEY (restaurant_id)
+		REFERENCES restaurants (restaurant_id) ON DELETE CASCADE
+) COMMENT '찜';
+
+
 -- =========================================================
 -- 샘플 데이터 (리뷰는 없음: 사이트에서 직접 작성해서 테스트)
 -- 비밀번호는 연습용이라 그대로 저장했습니다.
@@ -144,4 +161,4 @@ INSERT INTO restaurant_images (restaurant_id, file_name) VALUES
 (5, 'shop5_4.jpg'),
 (5, 'shop5_5.jpg');
 
--- 리뷰는 넣지 않았습니다. 사이트에서 직접 작성해 보세요.
+-- 리뷰와 찜은 넣지 않았습니다. 사이트에서 직접 해 보세요.

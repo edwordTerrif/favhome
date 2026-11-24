@@ -21,6 +21,9 @@
 <% } %>
 <% if (headerLogin) { %>
 		<span class="nav-user"><%= headerNickname %>님</span>
+<%	if (!headerAdmin) { %>
+		<a href="mypage.jsp">마이페이지</a>
+<%	} %>
 		<a href="logout.jsp">로그아웃</a>
 <% } else { %>
 		<a href="login.jsp">로그인</a>

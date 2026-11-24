@@ -44,6 +44,27 @@
 	// 맛집 수정/삭제: 등록한 본인 또는 관리자
 	boolean canEditRestaurant = isAdmin || (isLogin && loginId == writerId);
 
+	// ===== 찜 수, 내가 찜했는지 =====
+	pstmt = conn.prepareStatement("SELECT COUNT(*) FROM favorites WHERE restaurant_id = ?");
+	pstmt.setInt(1, restaurantId);
+	rs = pstmt.executeQuery();
+	rs.next();
+	int favCount = rs.getInt(1);
+	rs.close();
+	pstmt.close();
+
+	boolean isFavorite = false;
+	if (isLogin) {
+		pstmt = conn.prepareStatement("SELECT COUNT(*) FROM favorites WHERE restaurant_id = ? AND member_id = ?");
+		pstmt.setInt(1, restaurantId);
+		pstmt.setInt(2, loginId);
+		rs = pstmt.executeQuery();
+		rs.next();
+		isFavorite = rs.getInt(1) > 0;
+		rs.close();
+		pstmt.close();
+	}
+
 	// ===== 사진 목록 (처음 올린 사진이 대표) =====
 	List<String> images = new ArrayList<>();
 	pstmt = conn.prepareStatement("SELECT file_name FROM restaurant_images WHERE restaurant_id = ? ORDER BY image_id");
@@ -114,7 +135,18 @@
 			<div class="detail-info">
 				<span class="tag"><%= esc(category) %> · <%= esc(region) %></span>
 				<h1><%= esc(name) %></h1>
-				<p class="detail-star">★ <%= avgText(avgRating) %> <span>(리뷰 <%= reviewCount %>)</span></p>
+				<div class="star-row">
+					<p class="detail-star">★ <%= avgText(avgRating) %> <span>(리뷰 <%= reviewCount %>)</span></p>
+<% if (isAdmin) { %>
+					<span class="fav-count">♥ 찜 <%= favCount %></span>
+<% } else { %>
+					<!-- 찜 버튼: 누를 때마다 찜하기 ↔ 찜 해제 (로그인 안 했으면 로그인 화면으로) -->
+					<form action="favorite_toggle.jsp" method="post" class="inline-form">
+						<input type="hidden" name="restaurantId" value="<%= restaurantId %>">
+						<button type="submit" class="fav-btn<%= isFavorite ? " on" : "" %>"><%= isFavorite ? "♥ 찜함" : "♡ 찜하기" %> <span><%= favCount %></span></button>
+					</form>
+<% } %>
+				</div>
 				<ul class="detail-meta">
 <% if (address != null && !address.isEmpty()) { %>
 					<li><b>주소</b><%= esc(address) %></li>

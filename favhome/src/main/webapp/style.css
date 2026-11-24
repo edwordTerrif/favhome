@@ -640,6 +640,51 @@ body {
 	color: #aaa;
 }
 
+/* 별점 + 찜 버튼 한 줄 */
+.star-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 20px;
+}
+
+.star-row .detail-star {
+	margin-bottom: 0;
+}
+
+.fav-btn {
+	padding: 6px 14px;
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: bold;
+	color: #ff6b35;
+	background-color: #fff;
+	border: 1px solid #ffc9b3;
+	border-radius: 20px;
+	cursor: pointer;
+}
+
+.fav-btn:hover {
+	background-color: #fff3eb;
+}
+
+.fav-btn.on {
+	color: #fff;
+	background-color: #ff6b35;
+	border-color: #ff6b35;
+}
+
+.fav-btn span,
+.fav-count {
+	font-weight: normal;
+}
+
+.fav-count {
+	font-size: 14px;
+	color: #ff6b35;
+}
+
 .detail-meta {
 	list-style: none;
 }
@@ -769,6 +814,68 @@ body {
 	justify-content: flex-end;
 	gap: 6px;
 	margin-top: 14px;
+}
+
+/* ===== 마이페이지 ===== */
+.profile {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	margin-bottom: 28px;
+	padding: 24px 28px;
+	background-color: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.avatar {
+	display: flex;
+	flex: 0 0 64px;
+	justify-content: center;
+	align-items: center;
+	height: 64px;
+	font-size: 26px;
+	font-weight: bold;
+	color: #fff;
+	background-color: #ff6b35;
+	border-radius: 50%;
+}
+
+.container .profile h2 {
+	margin-bottom: 4px;
+	font-size: 22px;
+}
+
+.profile-meta {
+	font-size: 14px;
+	color: #888;
+}
+
+.my-tabs {
+	margin-bottom: 24px;
+}
+
+/* 카드 아래 버튼 (찜 해제, 수정) */
+.card-wrap {
+	display: flex;
+	flex-direction: column;
+}
+
+.card-wrap .card {
+	flex: 1;
+}
+
+.card-action {
+	margin-top: 8px;
+	text-align: right;
+}
+
+.review-shop {
+	color: #333;
+}
+
+.review-shop:hover {
+	color: #ff6b35;
 }
 
 /* ===== 폼 박스 (리뷰 수정, 맛집 등록) ===== */

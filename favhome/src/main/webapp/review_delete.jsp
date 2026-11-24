@@ -25,6 +25,11 @@
 	if (deleted == 0) {
 		alertBack(out, "본인이 쓴 리뷰만 삭제할 수 있습니다.");
 	} else {
-		response.sendRedirect("detail.jsp?id=" + restaurantId);
+		// 마이페이지에서 삭제했으면 마이페이지로, 아니면 맛집 상세로
+		if ("mypage".equals(request.getParameter("back"))) {
+			response.sendRedirect("mypage.jsp?tab=review");
+		} else {
+			response.sendRedirect("detail.jsp?id=" + restaurantId);
+		}
 	}
 %>
